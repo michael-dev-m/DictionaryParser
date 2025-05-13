@@ -112,10 +112,16 @@ data = [
 @pytest.mark.parametrize('filename, answers', data)
 def test_cambridge(monkeypatch, filename, answers):
 
+    path = os.path.join(os.path.dirname(__file__), 'sample_pages', filename)
+    with open(path, 'r') as f:
+        page = f.read()
+
+
     class MockResponse:
         def __init__(self, text, status_code):
             self.text = text
             self.status_code = status_code
+            self.url = 'http://example.com'
 
 
     class MockSession:
@@ -123,16 +129,14 @@ def test_cambridge(monkeypatch, filename, answers):
             self.headers = {}
 
         def get(self, *args, **kwargs):
-            return MockResponse(text=open(path), status_code=200)
+            return MockResponse(text=page, status_code=200)
 
 
     monkeypatch.setattr(requests, "Session", lambda: MockSession())
 
-    path = os.path.join(os.path.dirname(__file__), 'sample_pages', filename)
+    obj = parser.CambridgeDict(word='test')
 
-    p = parser.CambridgeDict()
-    p.get_page_soup(word='test')
-    p.make_cards()
-    cards = p.cards
-    for card in cards:
+    assert len(obj.cards) == len(answers)
+
+    for card in obj.cards:
         assert card in answers

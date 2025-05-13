@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, quote, urljoin
 from dataclasses import dataclass
 import requests
-
+from requests import Session
 
 LIMIT_OF_DEF = 3
 LIMIT_OF_THE_SAME_WORDS = 3
@@ -23,61 +23,110 @@ class Card:
     ru: list = None
     src_images: list = None
 
+    def fill_out_pron_uk(self, donor):
+        if not self.pron_uk:
+            self.pron_uk = donor.pron_uk
+
+    def fill_out_src_uk_mp3(self, donor):
+        if not self.src_uk_mp3:
+            self.src_uk_mp3 = donor.src_uk_mp3
+
+    def fill_out_pron_uk_block(self, donor):
+        if not self.src_uk_mp3 or not self.pron_uk:
+            self.pron_uk = donor.pron_uk
+            self.src_uk_mp3 = donor.src_uk_mp3
+
+    def fill_out_pron_us(self, donor):
+        if not self.pron_us:
+            self.pron_us = donor.pron_us
+
+    def fill_out_src_us_mp3(self, donor):
+        if not self.src_us_mp3:
+            self.src_us_mp3 = donor.src_us_mp3
+
+    def fill_out_pron_us_block(self, donor):
+        if not self.src_us_mp3 or not self.pron_us:
+            self.pron_us = donor.pron_us
+            self.src_us_mp3 = donor.src_us_mp3
+
+    def add_images(self, donor):
+        self.src_images.extend(donor.src_images)
+
+    def add_images_equal_pos(self, donor):
+        if self.word == donor.word and self.pos == donor.pos:
+            self.src_images.extend(donor.src_images)
+
 
 class OxfordDict:
     """
-    Grabber from Oxford Learners Dictionary.
+    Parser from Oxford Learners Dictionary.
 
     """
     dictionary = {'en': '/definition/english/',
                   'am-en': '/definition/american_english/'}
     url_parse = urlparse('https://www.oxfordlearnersdictionaries.com/')
 
-    def __init__(self):
+    def __init__(self, word, dictionary_type='en'):
         self.soup = BeautifulSoup()
         self.cards = []
+        self.session = requests.Session()
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            "Cache-Control": "max-age=0"
+        })
+        url = self._make_url(word, dictionary_type)
+        self.get_soup(url)
+        self.make_cards()
 
-    def get_page_soup(self, word, driver, dictionary='am-en'):
-        driver.get(self._make_url(word, dictionary))
-        self.soup = BeautifulSoup(driver.page_source, "html.parser")
+    def get_soup(self, url):
+        self.response = fetch_with_redirects(session=self.session, url=url)
+        self.soup = BeautifulSoup(self.response.text, "html.parser")
 
     def _make_url(self, word, dictionary):
         dict_url = urljoin(self.__class__.url_parse.geturl(),
-                                        self.__class__.dictionary[dictionary])
+                           self.__class__.dictionary[dictionary]
+                           )
         return urljoin(dict_url, quote(word))
 
     def make_cards(self):
         self._make_card()
         self._find_the_same_words()
+        for url in self._additional_pos_urls:
+            self.get_soup(url)
+            self._make_card()
 
     def _find_the_same_words(self):
         block_matches = self.soup.find('ul', attrs={'class': 'list-col'})
 
         items = block_matches.find_all('a')
-        self.urls = []
+        self._additional_pos_urls = set()
         for item in items:
             if item.find('span', class_='arl1'):
-                self.urls.append(item.get('href'))
-
-        # print(self.urls)
+                self._additional_pos_urls.add(item.get('href'))
 
     def _make_card(self):
         main_container = self.soup.find('div', {'class': 'main-container'})
-        webtop = main_container.find('div', { 'class': 'top-container'})
-        word = webtop.find(re.compile('^h')).get_text()
-        pos = webtop.find('span', class_='pos').get_text()
+        header = main_container.find('div', { 'class': 'top-container'})
+
+        word = header.find(re.compile('^h')).get_text()
+        pos = header.find('span', class_='pos').get_text()
         card = Card(word, pos)
 
         try:
-            blok_uk = self.soup.find('div', title=re.compile("pronunciation English"))
+            blok_uk = header.find('div', title=re.compile(" English"))
 
             card.src_uk_mp3 = blok_uk.get('data-src-mp3')
-            card.pron_uk = webtop.find('span', class_='phon').get_text(strip=True)
+            card.pron_uk = blok_uk.parent.find('span', class_='phon').get_text(strip=True)
         except AttributeError:
             pass
 
         try:
-            blok_us = self.soup.find('div', title=re.compile("pronunciation American"))
+            blok_us = main_container.find('div', title=re.compile(" American"))
+            
             card.src_us_mp3 = blok_us.get('data-src-mp3')
             card.pron_us = blok_us.parent.get_text(strip=True)
         except AttributeError:
@@ -101,7 +150,6 @@ class OxfordDict:
             else:
                 card.examples.append(examples)
 
-
         try:
             src_img = self.soup.find('img', class_='thumb').get('src')
             card.src_images = [src_img.replace('thumb', 'fullsize')]
@@ -113,15 +161,15 @@ class OxfordDict:
 
 class CambridgeDict:
     """
-    Grabber from Cambridge Dictionary.
+    Parser from Cambridge Dictionary.
 
     """
     dictionary = {'en': '/dictionary/english/',
                   'en-ru': '/dictionary/english-russian/',}
     url_parse = urlparse('https://dictionary.cambridge.org/')
 
-    def __init__(self):
-        self.soup = BeautifulSoup()
+    def __init__(self, word, dictionary_type='en-ru'):
+
         self.cards = []
         self.session = requests.Session()
         self.session.headers.update({
@@ -132,14 +180,17 @@ class CambridgeDict:
             "Upgrade-Insecure-Requests": "1",
             "Cache-Control": "max-age=0"
         })
+        self.response = fetch_with_redirects(session=self.session,
+                                             url=self._make_url(word, dictionary_type)
+                                             )
+        self.soup = BeautifulSoup(self.response.text, "html.parser")
+        self.make_cards()
 
-    def get_page_soup(self, word, dictionary='en'):
-        response = self.fetch_with_redirects(self._make_url(word, dictionary))
-        self.soup = BeautifulSoup(response.text, "html.parser")
+    def _make_url(self, word, dictionary_type):
 
-    def _make_url(self, word, dictionary):
         dict_url = urljoin(self.__class__.url_parse.geturl(),
-                                        self.__class__.dictionary[dictionary])
+                           self.__class__.dictionary[dictionary_type]
+                           )
         return urljoin(dict_url, quote(word))
 
     def make_cards(self):
@@ -193,9 +244,6 @@ class CambridgeDict:
         except AttributeError:
             pass
 
-        if card.pron_us:
-            card.pron_us = card.pron_uk
-
         # block contains the definition and the examples
         blocks = element.find_all('div', class_='def-block ddef_block', limit=LIMIT_OF_DEF)
         card.definitions = []
@@ -230,32 +278,33 @@ class CambridgeDict:
 
         self.cards.append(card)
 
-    def fetch_with_redirects(self, url: str, max_redirects: int = 10) -> requests.Response:
-        """
-        Fetch URL with manual redirect handling.
 
-        """
-        current_url = url
+def fetch_with_redirects(session: Session, url: str, max_redirects: int = 10) -> requests.Response:
+    """
+    Fetch URL with manual redirect handling.
 
-        for _ in range(max_redirects):
-            response = self.session.get(current_url, allow_redirects=False)
+    """
+    current_url = url
 
-            if response.status_code == 200:
-                return response
-            elif response.status_code in (301, 302, 303, 307, 308):
-                location = response.headers.get('Location')
-                if not location:
-                    raise Exception("Redirect without Location header")
+    for _ in range(max_redirects):
+        response = session.get(current_url, allow_redirects=False)
 
-                if not urlparse(location).netloc:
-                    current_url = urljoin(url, location)
-                else:
-                    current_url = location
-                continue
+        if response.status_code == 200:
+            return response
+        elif response.status_code in (301, 302, 303, 307, 308):
+            location = response.headers.get('Location')
+            if not location:
+                raise Exception("Redirect without Location header")
+
+            if not urlparse(location).netloc:
+                current_url = urljoin(url, location)
             else:
-                response.raise_for_status()
+                current_url = location
+            continue
+        else:
+            response.raise_for_status()
 
-        raise Exception("Too many redirects")
+    raise Exception("Too many redirects")
 
 
 class LanGeekDict:
