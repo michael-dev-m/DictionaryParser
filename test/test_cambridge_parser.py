@@ -10,6 +10,7 @@ data = [
      [
          parser.Card(word='handle',
                      pos='verb',
+                     source='http://example.com',
                      src_uk_mp3='https://dictionary.cambridge.org/media/english-russian/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                      pron_uk='/ˈhændl/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
@@ -29,6 +30,7 @@ data = [
                      src_images=[]),
          parser.Card(word='handle',
                      pos='noun',
+                     source='http://example.com',
                      src_uk_mp3='https://dictionary.cambridge.org/media/english-russian/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                      pron_uk='/ˈhændl/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
@@ -46,6 +48,7 @@ data = [
      [
          parser.Card(word='pick sth/sb up',
                      pos='phrasal verb',
+                     source='http://example.com',
                      src_uk_mp3='https://dictionary.cambridge.org/media/english-russian/uk_pron/u/ukp/ukpia/ukpiano004.mp3',
                      pron_uk='/pɪk/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/p/pic/pick_/pick.mp3',
@@ -63,47 +66,50 @@ data = [
         'cambridge_en_handle.html',
         [
             parser.Card(word='handle',
-     pos='noun',
-     src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
-     pron_uk='/ˈhæn.dəl/',
-     src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
-     pron_us='/ˈhæn.dəl/',
-     definitions=['a part of an object designed for holding, moving, or '
-                  'carrying the object easily: ',
-                  'a name of a person or place, especially a strange one: ',
-                  'a name that someone is known by on some social media '
-                  'websites: '],
-     examples=[['a door handle',
-                ' the handle on a suitcase',
-                " I can't pick the kettle up - the handle's too hot.",
-                'turn a handle She turned the handle and slowly opened the '
-                'door.'],
-               ["That's some handle to go through life with!"],
-               ['On this site, handles start with an @ sign.',
-                ' You can follow the team under the handle @ManUtd.']],
-     ru=[],
-     src_images=['https://dictionary.cambridge.org/images/full/handle_noun_002_17134.jpg?version=6.0.50']),
+                        pos='noun',
+                        source='http://example.com',
+                        src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
+                        pron_uk='/ˈhæn.dəl/',
+                        src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
+                        pron_us='/ˈhæn.dəl/',
+                        definitions=['a part of an object designed for holding, moving, or '
+                                     'carrying the object easily: ',
+                                     'a name of a person or place, especially a strange one: ',
+                                     'a name that someone is known by on some social media '
+                                     'websites: '],
+                        examples=[['a door handle',
+                                   ' the handle on a suitcase',
+                                   " I can't pick the kettle up - the handle's too hot.",
+                                   'turn a handle She turned the handle and slowly opened the '
+                                   'door.'],
+                                  ["That's some handle to go through life with!"],
+                                  ['On this site, handles start with an @ sign.',
+                                   ' You can follow the team under the handle @ManUtd.']],
+                        ru=[],
+                        src_images=[
+                            'https://dictionary.cambridge.org/images/full/handle_noun_002_17134.jpg?version=6.0.50']),
             parser.Card(word='handle',
-     pos='verb',
-     src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
-     pron_uk='/ˈhæn.dəl/',
-     src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
-     pron_us='/ˈhæn.dəl/',
-     definitions=['to deal with, have responsibility for, or be in charge of: ',
-                  'to pick something up and touch, hold, or move it with your '
-                  'hands: ',
-                  'to operate or control something that could be difficult or '
-                  'dangerous: '],
-     examples=[['I thought he handled the situation very well.',
-                ' Some people are brilliant with computers, but have no idea '
-                'how to handle (= behave with) other people.',
-                " If you can't handle the job I'll get someone else to do it.",
-                ' Who handles the marketing in your company?'],
-               ['Always wash your hands before handling food.',
-                " Please don't handle the vases - they're very fragile."],
-               ['Have you ever handled a gun before?']],
-     ru=[],
-     src_images=[])
+                        pos='verb',
+                        source='http://example.com',
+                        src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
+                        pron_uk='/ˈhæn.dəl/',
+                        src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
+                        pron_us='/ˈhæn.dəl/',
+                        definitions=['to deal with, have responsibility for, or be in charge of: ',
+                                     'to pick something up and touch, hold, or move it with your '
+                                     'hands: ',
+                                     'to operate or control something that could be difficult or '
+                                     'dangerous: '],
+                        examples=[['I thought he handled the situation very well.',
+                                   ' Some people are brilliant with computers, but have no idea '
+                                   'how to handle (= behave with) other people.',
+                                   " If you can't handle the job I'll get someone else to do it.",
+                                   ' Who handles the marketing in your company?'],
+                                  ['Always wash your hands before handling food.',
+                                   " Please don't handle the vases - they're very fragile."],
+                                  ['Have you ever handled a gun before?']],
+                        ru=[],
+                        src_images=[])
         ]
     )
 ]

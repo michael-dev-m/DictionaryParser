@@ -10,6 +10,7 @@ data = [
         [
             parser.Card(word='handle',
                         pos='verb',
+                        source='http://example.com',
                         src_uk_mp3='https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/h/han/handl/handle__gb_1.mp3',
                         pron_uk='/ˈhændl/',
                         src_us_mp3='https://www.oxfordlearnersdictionaries.com/media/english/us_pron/h/han/handl/handle__us_2.mp3',
@@ -28,6 +29,7 @@ data = [
         [
             parser.Card(word='handle',
                         pos='verb',
+                        source='http://example.com',
                         src_uk_mp3=None,
                         pron_uk=None,
                         src_us_mp3='https://www.oxfordlearnersdictionaries.com/media/american_english/us_pron/h/han/handl/handle__us_1.mp3',

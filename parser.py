@@ -14,6 +14,7 @@ class Card:
 
     word: str
     pos: str
+    source: str
     src_uk_mp3: str = None
     pron_uk: str = None
     src_us_mp3: str = None
@@ -62,9 +63,9 @@ class OxfordDict:
     Parser from Oxford Learners Dictionary.
 
     """
-    dictionary = {'en': '/definition/english/',
-                  'am-en': '/definition/american_english/'}
-    url_parse = urlparse('https://www.oxfordlearnersdictionaries.com/')
+    path_dictionary = {'en': '/search/english/',
+                  'am-en': '/search/american_english/'}
+    base_url = 'https://www.oxfordlearnersdictionaries.com/'
 
     def __init__(self, word, dictionary_type='en'):
         self.soup = BeautifulSoup()
@@ -86,11 +87,10 @@ class OxfordDict:
         self.response = fetch_with_redirects(session=self.session, url=url)
         self.soup = BeautifulSoup(self.response.text, "html.parser")
 
-    def _make_url(self, word, dictionary):
-        dict_url = urljoin(self.__class__.url_parse.geturl(),
-                           self.__class__.dictionary[dictionary]
-                           )
-        return urljoin(dict_url, quote(word))
+    def _make_url(self, word, key):
+        url_with_path = urljoin(self.__class__.base_url, self.__class__.path_dictionary[key])
+        query = f"?q={word.replace(' ', '+')}"
+        return urljoin(url_with_path, query)
 
     def make_cards(self):
         self._make_card()
@@ -114,7 +114,7 @@ class OxfordDict:
 
         word = header.find(re.compile('^h')).get_text()
         pos = header.find('span', class_='pos').get_text()
-        card = Card(word, pos)
+        card = Card(word, pos, self.response.url)
 
         try:
             blok_uk = header.find('div', title=re.compile(" English"))
@@ -188,10 +188,10 @@ class CambridgeDict:
 
     def _make_url(self, word, dictionary_type):
 
-        dict_url = urljoin(self.__class__.url_parse.geturl(),
-                           self.__class__.dictionary[dictionary_type]
-                           )
-        return urljoin(dict_url, quote(word))
+        url_with_path = urljoin(self.__class__.url_parse.geturl(),
+                                self.__class__.dictionary[dictionary_type]
+                                )
+        return urljoin(url_with_path, quote(word))
 
     def make_cards(self):
 
@@ -226,7 +226,7 @@ class CambridgeDict:
 
         word = element.find('div', class_='di-title').get_text()
         pos = element.find('span', class_='pos dpos').get_text()
-        card = Card(word, pos)
+        card = Card(word, pos, self.response.url)
 
         try:
             blok_uk = element.find('span', string='uk').parent
@@ -310,6 +310,7 @@ def fetch_with_redirects(session: Session, url: str, max_redirects: int = 10) ->
 class LanGeekDict:
 
     api_url = "https://api.langeek.co/v1/cs/en/word/"
+    base_url = "https://dictionary.langeek.co/en/word/"
 
     def __init__(self, word: str):
 
@@ -335,8 +336,11 @@ class LanGeekDict:
             for pos in item["translations"].keys():
                 for meaning in item["translations"][pos]:
                     try:
+                        url = urljoin(self.__class__.base_url,
+                                      f'{item["id"]}?entry={item["entry"]}')
                         self.cards.append(Card(word=item["entry"],
                                                pos=pos,
+                                               source= url,
                                                definitions=[meaning["translation"]],
                                                src_images=[meaning["wordPhoto"]["photoThumbnail"]]
                                                )

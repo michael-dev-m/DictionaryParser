@@ -3,7 +3,8 @@ import requests
 from parser import LanGeekDict, Card
 
 
-json_langeek_brief = [{'id': 23570,
+json_langeek_brief = [
+ {'id': 23570,
   'entry': 'brief',
   'inCategory': True,
   'pronunciation': '',
@@ -118,7 +119,7 @@ json_langeek_brief = [{'id': 23570,
                              'position': 9,
                              'partOfSpeech': {'partOfSpeechType': 'noun'}}]},
                        'otherForms': []},
-                      {'id': 23578,
+{'id': 23578,
   'entry': 'briefs',
   'inCategory': True,
   'pronunciation': '',
@@ -151,7 +152,7 @@ json_langeek_brief = [{'id': 23570,
                              'position': 0,
                              'partOfSpeech': {'partOfSpeechType': 'noun'}}]},
   'otherForms': []},
-                      {'id': 23576,
+{'id': 23576,
   'entry': 'briefly',
   'inCategory': True,
   'pronunciation': '',
@@ -228,18 +229,22 @@ json_langeek_brief = [{'id': 23570,
   'otherForms': []}]
 
 answers = [
-    Card(word='brief', pos='verb',
+    Card(word='brief', pos='verb', source='https://dictionary.langeek.co/en/word/23570?entry=brief',
          definitions=['to give someone essential information or instructions about a particular subject or task'],
          src_images=['https://cdn.langeek.co/photo/44786/thumb?type=jpeg']),
-    Card(word='brief', pos='adjective', definitions=['short in duration'],
+    Card(word='brief', pos='adjective', source='https://dictionary.langeek.co/en/word/23570?entry=brief',
+         definitions=['short in duration'],
          src_images=['https://cdn.langeek.co/photo/23687/thumb?type=jpeg']),
-    Card(word='brief', pos='adjective', definitions=['(of clothes) short and revealing'],
+    Card(word='brief', pos='adjective', source='https://dictionary.langeek.co/en/word/23570?entry=brief',
+         definitions=['(of clothes) short and revealing'],
          src_images=['https://cdn.langeek.co/photo/24959/thumb?type=jpeg']),
-    Card(word='briefs', pos='noun', definitions=['legless underwear that fits tightly'],
+    Card(word='briefs', pos='noun', source='https://dictionary.langeek.co/en/word/23578?entry=briefs',
+         definitions=['legless underwear that fits tightly'],
          src_images=['https://cdn.langeek.co/photo/25413/thumb?type=jpeg']),
-    Card(word='briefly', pos='adverb', definitions=['in a way that takes a short period of time'],
+    Card(word='briefly', pos='adverb', source='https://dictionary.langeek.co/en/word/23576?entry=briefly',
+         definitions=['in a way that takes a short period of time'],
          src_images=['https://cdn.langeek.co/photo/48905/thumb?type=jpeg']),
-    Card(word='briefcase', pos='noun',
+    Card(word='briefcase', pos='noun', source='https://dictionary.langeek.co/en/word/23571?entry=briefcase',
          definitions=['a flat, leather or plastic case with a handle, used for carrying papers or documents'],
          src_images=['https://cdn.langeek.co/photo/49926/thumb/briefcase?type=jpeg'])
 ]
@@ -251,6 +256,7 @@ def test_langeek_fetch(monkeypatch):
         def __init__(self, json_data, status_code):
             self._json = json_data
             self.status_code = status_code
+            self.url = 'http://example.com',
 
         def json(self):
             return self._json

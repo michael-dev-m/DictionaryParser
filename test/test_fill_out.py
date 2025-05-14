@@ -3,6 +3,7 @@ import parser
 main_cards = [
     parser.Card(word='handle',
                 pos='verb',
+                source='http://test.com',
                 src_uk_mp3='https://dictionary.cambridge.org/media/english-russian/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                 pron_uk='/ˈhændl/',
                 src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
@@ -18,6 +19,7 @@ main_cards = [
                 ),
     parser.Card(word='handle',
                 pos='noun',
+source='http://test.com',
                 src_uk_mp3='https://dictionary.cambridge.org/media/english-russian/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                 pron_uk='/ˈhændl/',
                 src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
@@ -32,6 +34,7 @@ main_cards = [
 donor_cards = [
     parser.Card(word='handle',
                 pos='noun',
+                source='http://test.com',
                 src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                 pron_uk='/ˈhæn.dəl/',
                 src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
@@ -42,6 +45,7 @@ donor_cards = [
                 src_images=['https://dictionary.cambridge.org/images/full/handle_noun_002_17134.jpg?version=6.0.50']),
     parser.Card(word='handle',
                 pos='verb',
+                source='http://test.com',
                 src_uk_mp3='https://dictionary.cambridge.org/media/english/uk_pron/u/ukh/ukhan/ukhandb022.mp3',
                 pron_uk='/ˈhæn.dəl/',
                 src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
