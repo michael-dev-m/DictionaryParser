@@ -191,7 +191,7 @@ class CambridgeDict:
         url_with_path = urljoin(self.__class__.url_parse.geturl(),
                                 self.__class__.dictionary[dictionary_type]
                                 )
-        return urljoin(url_with_path, quote(word))
+        return urljoin(url_with_path, word.replace(' ', '-'))
 
     def make_cards(self):
 
