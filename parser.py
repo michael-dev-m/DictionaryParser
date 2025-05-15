@@ -8,6 +8,7 @@ from requests import Session
 LIMIT_OF_DEF = 3
 LIMIT_OF_THE_SAME_WORDS = 3
 
+endings = ['ing', 'es', 'ed', 's', 'd', 'e']
 
 @dataclass
 class Card:
@@ -56,6 +57,33 @@ class Card:
     def add_images_equal_pos(self, donor):
         if self.word == donor.word and self.pos == donor.pos:
             self.src_images.extend(donor.src_images)
+
+    def _pattern(self, prefix):
+        return re.compile(r'\b(' + re.escape(prefix) + r'\w*)', re.IGNORECASE)
+
+    def _replacer(self, match):
+        _word = match.group(1)
+        return f"{{{{c1::{_word}}}}}"
+
+    def cloze_anki(self):
+        prefix = strip_ending(self.word)
+        definitions = []
+        examples = []
+        for _definition, _examples in zip(self.definitions, self.examples):
+            definitions.append(f"{{{{c1::{self.word}::{self.pos}}}}} - {_definition}")
+            examples_for_definition = []
+            for text in _examples:
+                examples_for_definition.append(self._pattern(prefix).sub(self._replacer, text))
+            examples.append(examples_for_definition)
+        self.definitions = definitions
+        self.examples = examples
+
+
+def strip_ending(word):
+    for ending in endings:
+        if word.endswith(ending):
+            return word[:-len(ending)]
+    return word
 
 
 class OxfordDict:
