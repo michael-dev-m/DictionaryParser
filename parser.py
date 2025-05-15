@@ -67,16 +67,10 @@ class Card:
 
     def cloze_anki(self):
         prefix = strip_ending(self.word)
-        definitions = []
-        examples = []
-        for _definition, _examples in zip(self.definitions, self.examples):
-            definitions.append(f"{{{{c1::{self.word}::{self.pos}}}}} - {_definition}")
-            examples_for_definition = []
-            for text in _examples:
-                examples_for_definition.append(self._pattern(prefix).sub(self._replacer, text))
-            examples.append(examples_for_definition)
-        self.definitions = definitions
-        self.examples = examples
+        for i in range(len(self.definitions)):
+            self.definitions[i] = f"{{{{c1::{self.word}::{self.pos}}}}} - {self.definitions[i]}"
+            for text in self.examples[i]:
+                self.examples[i] = self._pattern(prefix).sub(self._replacer, text)
 
 
 def strip_ending(word):
