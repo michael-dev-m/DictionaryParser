@@ -8,7 +8,7 @@ from requests import Session
 LIMIT_OF_DEF = 3
 LIMIT_OF_THE_SAME_WORDS = 3
 
-endings = ['ing', 'es', 'ed', 's', 'd', 'e']
+endings = ['ing', 'ily', 'ly', 'es', 'ed', 's', 'd', 'e', 'y']
 
 @dataclass
 class Card:
