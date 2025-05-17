@@ -1,4 +1,6 @@
 import re
+import os
+import time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, quote, urljoin
 from dataclasses import dataclass
@@ -78,6 +80,66 @@ def strip_ending(word):
         if word.endswith(ending):
             return word[:-len(ending)]
     return word
+
+
+def download_file(url: str, filedir: str, filename: str) -> str:
+    """
+    Download file.
+
+    """
+    if not url:
+        return ""
+
+    # Create browser-like headers
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://dictionary.cambridge.org/",
+        "Connection": "keep-alive"
+    }
+
+    # Create filepath
+    filepath = os.path.join(filedir, filename)
+
+    # Check if file already exists
+    if os.path.exists(filepath):
+        return filename
+
+    # Try downloading with retries
+    max_retries = 3
+    retry_interval = 2  # seconds
+
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=headers, timeout=45)
+
+            if response.status_code != 200:
+                if attempt < max_retries - 1:
+                    time.sleep(retry_interval)
+                    continue
+                return ""
+
+            # Create file
+            with open(filepath, "wb") as f:
+                f.write(response.content)
+
+            return filename
+
+        except Exception as e:
+            # Clean up partial file if it exists
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except:
+                    pass
+
+            if attempt < max_retries - 1:
+                time.sleep(retry_interval)
+                continue
+            print(f"Error downloading file {url}: {str(e)}")
+
+    return ""
 
 
 class OxfordDict:
@@ -364,7 +426,7 @@ class LanGeekDict:
                                                pos=pos,
                                                source= url,
                                                definitions=[meaning["translation"]],
-                                               src_images=[meaning["wordPhoto"]["photoThumbnail"]]
+                                               src_images=[meaning["wordPhoto"]["photo"]]
                                                )
                                           )
                     except KeyError:
