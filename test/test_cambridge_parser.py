@@ -15,18 +15,17 @@ data = [
                      pron_uk='/ˈhændl/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
                      pron_us='/ˈhændl/',
-                     definitions=['to deal with something',
-                                  'to touch, hold, or pick up something',
-                                  'to buy and sell goods'],
-                     examples=[
-                         ['He handled the situation very well.',
-                          ' This office handles thousands of enquiries every day.'],
-                         ['You must wash your hands before handling food.'],
-                         ["He's been charged with handling stolen goods."]
-                     ],
-                     ru=['иметь дело с чем-либо, справляться ',
-                         'трогать, прикасаться ',
-                         'торговать '],
+                     data=[{'definition': 'to deal with something',
+                            'examples': ['He handled the situation very well.',
+                                         ' This office handles thousands of enquiries every '
+                                         'day.'],
+                            'translate': 'иметь дело с чем-либо, справляться '},
+                           {'definition': 'to touch, hold, or pick up something',
+                            'examples': ['You must wash your hands before handling food.'],
+                            'translate': 'трогать, прикасаться '},
+                           {'definition': 'to buy and sell goods',
+                            'examples': ["He's been charged with handling stolen goods."],
+                            'translate': 'торговать '}],
                      src_images=[]),
          parser.Card(word='handle',
                      pos='noun',
@@ -35,9 +34,10 @@ data = [
                      pron_uk='/ˈhændl/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/h/han/handl/handle.mp3',
                      pron_us='/ˈhændl/',
-                     definitions=['the part of something that you use to hold it or open it'],
-                     examples=[['a door handle ', 'the handle on a suitcase']],
-                     ru=['ручка, рукоятка '],
+                     data=[{'definition': 'the part of something that you use to hold it or '
+                                          'open it',
+                            'examples': ['a door handle ', 'the handle on a suitcase'],
+                            'translate': 'ручка, рукоятка '}],
                      src_images=[])
 
      ]
@@ -53,11 +53,15 @@ data = [
                      pron_uk='/pɪk/',
                      src_us_mp3='https://dictionary.cambridge.org/media/english-russian/us_pron/p/pic/pick_/pick.mp3',
                      pron_us='/pɪk/',
-                     definitions=['to lift something or someone by using your hands',
-                                  'to collect someone who is waiting for you, or to collect something that you have left somewhere'],
-                     examples=[['He picked his coat up off the floor.', ' Just pick up the phone and call him.'],
-                               ['Can you pick me up from the airport?', " I've got to pick up those books I ordered."]],
-                     ru=['поднимать, подбирать ', 'заезжать за кем-либо, забирать что-либо '],
+                     data=[{'definition': 'to lift something or someone by using your hands',
+                            'examples': ['He picked his coat up off the floor.',
+                                         ' Just pick up the phone and call him.'],
+                            'translate': 'поднимать, подбирать '},
+                           {'definition': 'to collect someone who is waiting for you, or to '
+                                          'collect something that you have left somewhere',
+                            'examples': ['Can you pick me up from the airport?',
+                                         " I've got to pick up those books I ordered."],
+                            'translate': 'заезжать за кем-либо, забирать что-либо '}],
                      src_images=[])
 
      ]
@@ -72,20 +76,24 @@ data = [
                         pron_uk='/ˈhæn.dəl/',
                         src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
                         pron_us='/ˈhæn.dəl/',
-                        definitions=['a part of an object designed for holding, moving, or '
-                                     'carrying the object easily: ',
-                                     'a name of a person or place, especially a strange one: ',
-                                     'a name that someone is known by on some social media '
-                                     'websites: '],
-                        examples=[['a door handle',
-                                   ' the handle on a suitcase',
-                                   " I can't pick the kettle up - the handle's too hot.",
-                                   'turn a handle She turned the handle and slowly opened the '
-                                   'door.'],
-                                  ["That's some handle to go through life with!"],
-                                  ['On this site, handles start with an @ sign.',
-                                   ' You can follow the team under the handle @ManUtd.']],
-                        ru=[],
+                        data=[{'definition': 'a part of an object designed for holding, moving, '
+                                             'or carrying the object easily: ',
+                               'examples': ['a door handle',
+                                            ' the handle on a suitcase',
+                                            " I can't pick the kettle up - the handle's too hot.",
+                                            'turn a handle She turned the handle and slowly '
+                                            'opened the door.'],
+                               'translate': ''},
+                              {'definition': 'a name of a person or place, especially a strange '
+                                             'one: ',
+                               'examples': ["That's some handle to go through life with!"],
+                               'translate': ''},
+                              {'definition': 'a name that someone is known by on some social '
+                                             'media websites: ',
+                               'examples': ['On this site, handles start with an @ sign.',
+                                            ' You can follow the team under the handle '
+                                            '@ManUtd.'],
+                               'translate': ''}],
                         src_images=[
                             'https://dictionary.cambridge.org/images/full/handle_noun_002_17134.jpg?version=6.0.50']),
             parser.Card(word='handle',
@@ -95,20 +103,25 @@ data = [
                         pron_uk='/ˈhæn.dəl/',
                         src_us_mp3='https://dictionary.cambridge.org/media/english/us_pron/h/han/handl/handle.mp3',
                         pron_us='/ˈhæn.dəl/',
-                        definitions=['to deal with, have responsibility for, or be in charge of: ',
-                                     'to pick something up and touch, hold, or move it with your '
-                                     'hands: ',
-                                     'to operate or control something that could be difficult or '
-                                     'dangerous: '],
-                        examples=[['I thought he handled the situation very well.',
-                                   ' Some people are brilliant with computers, but have no idea '
-                                   'how to handle (= behave with) other people.',
-                                   " If you can't handle the job I'll get someone else to do it.",
-                                   ' Who handles the marketing in your company?'],
-                                  ['Always wash your hands before handling food.',
-                                   " Please don't handle the vases - they're very fragile."],
-                                  ['Have you ever handled a gun before?']],
-                        ru=[],
+                        data=[{'definition': 'to deal with, have responsibility for, or be in '
+                                             'charge of: ',
+                               'examples': ['I thought he handled the situation very well.',
+                                            ' Some people are brilliant with computers, but have '
+                                            'no idea how to handle (= behave with) other people.',
+                                            " If you can't handle the job I'll get someone else "
+                                            'to do it.',
+                                            ' Who handles the marketing in your company?'],
+                               'translate': ''},
+                              {'definition': 'to pick something up and touch, hold, or move it '
+                                             'with your hands: ',
+                               'examples': ['Always wash your hands before handling food.',
+                                            " Please don't handle the vases - they're very "
+                                            'fragile.'],
+                               'translate': ''},
+                              {'definition': 'to operate or control something that could be '
+                                             'difficult or dangerous: ',
+                               'examples': ['Have you ever handled a gun before?'],
+                               'translate': ''}],
                         src_images=[])
         ]
     )
