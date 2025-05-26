@@ -111,7 +111,6 @@ def test_cambridge(monkeypatch, filename, answers):
     monkeypatch.setattr(requests, "Session", lambda: MockSession())
 
     obj = parser.OxfordDict(word='test')
-    # print('===========')
+
     for card in obj.cards:
-        # print(card)
         assert card in answers

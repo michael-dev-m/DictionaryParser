@@ -191,13 +191,16 @@ class OxfordDict:
             "Upgrade-Insecure-Requests": "1",
             "Cache-Control": "max-age=0"
         })
+        self.fetch_cards(word, dictionary_type)
+
+    def fetch_cards(self, word, dictionary_type='en'):
         url = self._make_url(word, dictionary_type)
         self.get_soup(url)
         self.make_cards()
 
     def get_soup(self, url):
         self.response = fetch_with_redirects(session=self.session, url=url)
-        self.soup = BeautifulSoup(self.response.text, "html.parser")
+        self.soup = BeautifulSoup(self.response.text, "lxml")
 
     def _make_url(self, word, key):
         url_with_path = urljoin(self.__class__.base_url, self.__class__.path_dictionary[key])
@@ -294,10 +297,13 @@ class CambridgeDict:
             "Upgrade-Insecure-Requests": "1",
             "Cache-Control": "max-age=0"
         })
+        self.fetch_cards(word, dictionary_type)
+
+    def fetch_cards(self, word, dictionary_type='en'):
         self.response = fetch_with_redirects(session=self.session,
                                              url=self._make_url(word, dictionary_type)
                                              )
-        self.soup = BeautifulSoup(self.response.text, "html.parser")
+        self.soup = BeautifulSoup(self.response.text, "lxml")
         self.make_cards()
 
     def _make_url(self, word, dictionary_type):
@@ -308,7 +314,8 @@ class CambridgeDict:
         return urljoin(url_with_path, word.replace(' ', '-'))
 
     def make_cards(self):
-
+        # there are some dictionaries on a page of english dictionary
+        # so we take only first
         first_dictionary = self.soup.find('div', {'class': 'pr dictionary'})
         if first_dictionary:
             # for a page of english dictionary
@@ -434,15 +441,6 @@ class LanGeekDict:
     def __init__(self, word: str):
 
         self.cards = []
-        self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Connection": "keep-alive",
-            "Upgrade-Insecure-Requests": "1",
-            "Cache-Control": "max-age=0"
-        })
         self.response_json = self.fetch_point(word)
         self.make_cards()
 
@@ -470,10 +468,13 @@ class LanGeekDict:
                         pass
 
     def fetch_point(self, word):
-        response = self.session.get(self.__class__.api_url,
-                                    params={"term": word,
-                                            "filter": ",inCategory,photo"}
-                                    )
+        response = requests.get(self.__class__.api_url,
+                                params={"term": word,
+                                        "filter": ",inCategory,photo"},
+                                stream=True,
+                                timeout=5,
+                                allow_redirects=False,
+                                )
         if response.status_code == 200:
             return response.json()
         else:

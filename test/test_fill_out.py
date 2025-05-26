@@ -133,10 +133,7 @@ modify_cards = [
 
 def test_add_img():
     for main_card in main_cards:
-        print(' === ')
-
         main_card.cloze_anki()
-        print(main_card.get_xml_definitions())
         for donor_card in donor_cards:
             main_card.add_images_equal_pos(donor_card)
     for card in main_cards:
