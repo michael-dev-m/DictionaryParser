@@ -6,6 +6,7 @@ from urllib.parse import urlparse, urljoin
 from dataclasses import dataclass
 import requests
 from requests import Session
+from lxml import etree
 
 
 LIMIT_OF_DEF = 3
@@ -77,12 +78,36 @@ class Card:
             except KeyError:
                 self.data[i]['examples'] = []
 
+    def get_xml_definitions(self):
+        root_ul = etree.Element("ul")
+        for block in self.data:
+            li_main = etree.SubElement(root_ul, "li")
+            li_main.text = block['definition']
+            inner_ul = etree.SubElement(li_main, "ul")
+            for example in block['examples']:
+                li_example = etree.SubElement(inner_ul, "li")
+                li_example.text = example
+        xml_string = etree.tostring(root_ul, pretty_print=True, encoding="unicode", method="html")
+        return xml_string
+
 
 def strip_ending(word):
     for ending in endings:
         if word.endswith(ending):
             return word[:-len(ending)]
     return word
+
+
+def get_xml_definition(data: dict):
+    root_ul = etree.Element("ul")
+    li_main = etree.SubElement(root_ul, "li")
+    li_main.text = data['definition']
+    inner_ul = etree.SubElement(li_main, "ul")
+    for example in data['examples']:
+        li_example = etree.SubElement(inner_ul, "li")
+        li_example.text = example
+    xml_string = etree.tostring(root_ul, pretty_print=True, encoding="unicode", method="html")
+    return xml_string
 
 
 def download_file(url: str, filedir: str, filename: str) -> str:
