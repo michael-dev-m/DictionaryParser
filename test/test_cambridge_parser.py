@@ -153,7 +153,7 @@ def test_cambridge(monkeypatch, filename, answers):
 
     monkeypatch.setattr(requests, "Session", lambda: MockSession())
 
-    obj = parser.CambridgeDict(word='test')
+    obj = parser.CambridgeDict(word='test', definition_limit=3)
 
     assert len(obj.cards) == len(answers)
 

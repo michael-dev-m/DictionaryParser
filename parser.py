@@ -6,10 +6,8 @@ from urllib.parse import urlparse, urljoin
 from dataclasses import dataclass
 import requests
 from requests import Session
-from lxml import etree
 
 
-LIMIT_OF_DEF = 3
 LIMIT_OF_THE_SAME_WORDS = 3
 
 endings = ['ing', 'ily', 'ly', 'es', 'ed', 's', 'd', 'e', 'y']
@@ -78,36 +76,12 @@ class Card:
             except KeyError:
                 self.data[i]['examples'] = []
 
-    def get_xml_definitions(self):
-        root_ul = etree.Element("ul")
-        for block in self.data:
-            li_main = etree.SubElement(root_ul, "li")
-            li_main.text = block['definition']
-            inner_ul = etree.SubElement(li_main, "ul")
-            for example in block['examples']:
-                li_example = etree.SubElement(inner_ul, "li")
-                li_example.text = example
-        xml_string = etree.tostring(root_ul, pretty_print=True, encoding="unicode", method="html")
-        return xml_string
-
 
 def strip_ending(word):
     for ending in endings:
         if word.endswith(ending):
             return word[:-len(ending)]
     return word
-
-
-def get_xml_definition(data: dict):
-    root_ul = etree.Element("ul")
-    li_main = etree.SubElement(root_ul, "li")
-    li_main.text = data['definition']
-    inner_ul = etree.SubElement(li_main, "ul")
-    for example in data['examples']:
-        li_example = etree.SubElement(inner_ul, "li")
-        li_example.text = example
-    xml_string = etree.tostring(root_ul, pretty_print=True, encoding="unicode", method="html")
-    return xml_string
 
 
 def download_file(url: str, filedir: str, filename: str) -> str:
@@ -179,7 +153,8 @@ class OxfordDict:
                   'am-en': '/search/american_english/'}
     base_url = 'https://www.oxfordlearnersdictionaries.com/'
 
-    def __init__(self, word, dictionary_type='en'):
+    def __init__(self, word, dictionary_type='en', definition_limit = 1):
+        self.def_limit = definition_limit
         self.soup = BeautifulSoup()
         self.cards = []
         self.session = requests.Session()
@@ -200,7 +175,7 @@ class OxfordDict:
 
     def get_soup(self, url):
         self.response = fetch_with_redirects(session=self.session, url=url)
-        self.soup = BeautifulSoup(self.response.text, "lxml")
+        self.soup = BeautifulSoup(self.response.text, "html.parser")
 
     def _make_url(self, word, key):
         url_with_path = urljoin(self.__class__.base_url, self.__class__.path_dictionary[key])
@@ -250,7 +225,7 @@ class OxfordDict:
         def has_li_and_id(tag):
             return tag.name == 'li' and tag.has_attr('id')
 
-        blocks = main_container.find_all(has_li_and_id, limit=LIMIT_OF_DEF)
+        blocks = main_container.find_all(has_li_and_id, limit=self.def_limit)
         card.data = []
         for block in blocks:
             data = dict()
@@ -285,8 +260,8 @@ class CambridgeDict:
                   'en-ru': '/dictionary/english-russian/',}
     url_parse = urlparse('https://dictionary.cambridge.org/')
 
-    def __init__(self, word, dictionary_type='en-ru'):
-
+    def __init__(self, word, dictionary_type='en-ru', definition_limit=1):
+        self.def_limit = definition_limit
         self.cards = []
         self.session = requests.Session()
         self.session.headers.update({
@@ -303,7 +278,7 @@ class CambridgeDict:
         self.response = fetch_with_redirects(session=self.session,
                                              url=self._make_url(word, dictionary_type)
                                              )
-        self.soup = BeautifulSoup(self.response.text, "lxml")
+        self.soup = BeautifulSoup(self.response.text, "html.parser")
         self.make_cards()
 
     def _make_url(self, word, dictionary_type):
@@ -373,7 +348,7 @@ class CambridgeDict:
             card.pron_us = card.pron_uk
 
         # block contains the definition and the examples
-        blocks = element.find_all('div', class_='def-block ddef_block', limit=LIMIT_OF_DEF)
+        blocks = element.find_all('div', class_='def-block ddef_block', limit=self.def_limit)
         card.data = []
         for block in blocks:
             data = dict()
