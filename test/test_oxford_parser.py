@@ -53,7 +53,7 @@ data = [
                         source='http://example.com',
 
                         src_us_mp3='https://www.oxfordlearnersdictionaries.com/media/american_english/us_pron/h/han/handl/handle__us_1.mp3',
-                        pron_us='NAmE//ˈhændl//',
+                        pron_us='//ˈhændl//',
                         data=[{'definition': 'to deal with a situation, a person, an area of '
                                              'work, or a strong emotion',
                                'examples': ['A new man was appointed to handle the crisis.',
@@ -80,6 +80,27 @@ data = [
                                'translate': ''}],
                         )
 
+        ]
+    ),
+    (
+        'oxford_am_en_notion.html',
+        [
+            parser.Card(word='notion',
+                        pos='noun',
+                        source='http://example.com',
+                        src_uk_mp3='',
+                        pron_uk='',
+                        src_us_mp3='https://www.oxfordlearnersdictionaries.com/media/american_english/us_pron/n/not/notio/notion__us_1.mp3',
+                        pron_us='//ˈnoʊʃn//',
+                        data=[{'definition': 'an idea, a belief, or an understanding of something',
+                               'examples': ['a political system based on the notions of equality '
+                                            'and liberty',
+                                            'She had only a vague notion of what might happen.',
+                                            'He has no notion of the difficulty of the problem.',
+                                            'I have to reject the notion that greed can be a good '
+                                            'thing.'],
+                               'translate': ''}],
+                        src_images=[])
         ]
     )
 ]

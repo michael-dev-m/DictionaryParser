@@ -183,7 +183,13 @@ class OxfordDict:
         return urljoin(url_with_path, query)
 
     def make_cards(self):
-        self._make_card()
+        try:
+            self._make_card()
+        except AttributeError:
+            # https://www.oxfordlearnersdictionaries.com/spellcheck/american_english/
+            # if the word is not found the site will return status_code == 200
+            return
+
         self._find_the_same_words()
         for url in self._additional_pos_urls:
             self.get_soup(url)
@@ -200,6 +206,7 @@ class OxfordDict:
 
     def _make_card(self):
         main_container = self.soup.find('div', {'class': 'main-container'})
+
         header = main_container.find('div', { 'class': 'top-container'})
 
         word = header.find(re.compile('^h')).get_text()
@@ -219,6 +226,8 @@ class OxfordDict:
             
             card.src_us_mp3 = blok_us.get('data-src-mp3')
             card.pron_us = blok_us.parent.get_text(strip=True)
+            if card.pron_us.startswith('NAmE'):
+                card.pron_us = card.pron_us[4:]
         except AttributeError:
             pass
 
@@ -226,13 +235,19 @@ class OxfordDict:
             return tag.name == 'li' and tag.has_attr('id')
 
         blocks = main_container.find_all(has_li_and_id, limit=self.def_limit)
-        card.data = []
+
+        if not blocks:
+            blocks = [main_container]
+
         for block in blocks:
             data = dict()
             try:
                 data['definition'] = block.find('span', class_='def').get_text()
             except AttributeError:
-                data['definition'] = block.find('span', class_='xrefs').get_text()
+                try:
+                    data['definition'] = block.find('span', class_='xrefs').get_text()
+                except AttributeError:
+                    data['definition'] = ''
 
             try:
                 data['examples'] = [x.get_text() for x in block.find_all('span', class_='x')]
@@ -349,7 +364,7 @@ class CambridgeDict:
 
         # block contains the definition and the examples
         blocks = element.find_all('div', class_='def-block ddef_block', limit=self.def_limit)
-        card.data = []
+
         for block in blocks:
             data = dict()
             data['definition'] = block.find('div', {'class': 'def ddef_d db'}).get_text()
@@ -368,7 +383,6 @@ class CambridgeDict:
             card.data.append(data)
 
         try:
-            card.src_images = []
             parts = element.find_all('amp-img', class_='dimg_i hp')
             for part in parts:
                 src = part.get('src')
