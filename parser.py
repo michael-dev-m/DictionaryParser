@@ -3,7 +3,7 @@ import os
 import time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import requests
 from requests import Session
 
@@ -19,12 +19,12 @@ class Card:
     word: str
     pos: str
     source: str
-    src_uk_mp3: str = None
-    pron_uk: str = None
-    src_us_mp3: str = None
-    pron_us: str = None
-    data: list = None   #[{'definition': str, 'examples': [], 'translate': str}, {}]
-    src_images: list = None
+    src_uk_mp3: str = ''
+    pron_uk: str = ''
+    src_us_mp3: str = ''
+    pron_us: str = ''
+    data: list = field(default_factory=list)   #[{'definition': str, 'examples': [], 'translate': str}, {}]
+    src_images: list = field(default_factory=list)
 
     def add_images(self, donor):
         self.src_images.extend(donor.src_images)
@@ -43,16 +43,16 @@ class Card:
     def cloze_anki(self):
         """
         This method in the examples field encloses the search word in double curly brackets
-        and adds {{c1::word::part of speech}} to the definition field.
         For example: 'I thought he {{c1::handled}} the situation very well.'
+        And adds '{{c1::word}} [part of speech]' to the definition field.
 
         """
         prefix = strip_ending(self.word)
         for i in range(len(self.data)):
             try:
-                self.data[i]['definition'] = f"{{{{c1::{self.word}::{self.pos}}}}} - {self.data[i]['definition']}"
+                self.data[i]['definition'] = f"{{{{c1::{self.word}}}}} [{self.pos}] - {self.data[i]['definition']}"
             except KeyError:
-                self.data[i]['definition'] = f"{{{{c1::{self.word}::{self.pos}}}}} "
+                self.data[i]['definition'] = f"{{{{c1::{self.word}}}}} [{self.pos}]"
             try:
                 self.data[i]['examples'] = [self._pattern(prefix).sub(self._replacer_c1, text) for text in
                                             self.data[i]['examples']]
